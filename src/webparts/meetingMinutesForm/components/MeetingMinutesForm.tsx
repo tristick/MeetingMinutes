@@ -26,7 +26,7 @@ let isemailInvalid:boolean = false;
 let streamerror:boolean =false;
 let isbuttondisbled : boolean = false;
 let buttontext : string = "Submit";
-let isselectedattendees:boolean = true ;
+let isselectedattendees:boolean = false ;
 let listId: number;
 let customerreference:string;
 
@@ -95,7 +95,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
   };
 
   private onpurposeofmeetingchange = (newText: string) => {
-    console.log("test")
+    
     this.setState({purposeofmeeting:newText});
    
     return newText;
@@ -123,7 +123,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
   public _getPeoplePickerItems=(items: any[]) =>{  
     console.log(items)
 
-    if(items.length< 0){
+    if(items.length>0){
       let selectedUsers: string[] = [];
        items.map((item) => {
          selectedUsers.push(item.id);
@@ -131,7 +131,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
        });
         this.setState({users: selectedUsers});
        console.log('users:',selectedUsers)  
-      isselectedattendees  = false;
+      isselectedattendees  = true;
       //console.log('Items new:', userid );
     }else{
       
@@ -327,7 +327,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
 
       private _createItem  =async (props:IMeetingMinutesFormProps):Promise<void>=>{
 
-      if(!isselectedattendees || (this.state.attendeeDropdown).length == 0 || isEmpty(this.state.meetingtitle)||isEmpty(this.state.location) || isEmpty(this.state.purposeofmeeting) || 
+      if(isselectedattendees==false || (this.state.attendeeDropdown).length == 0 || isEmpty(this.state.meetingtitle)||isEmpty(this.state.location) || isEmpty(this.state.purposeofmeeting) || 
       isEmpty(this.state.mainminutes) 
       )
           {
@@ -392,7 +392,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
         Title: this.state.title,
         Customer: this.state.customer,
         Location: this.state.location,
-        MeetingData: this.state.meetingdate,
+        MeetingDate: this.state.meetingdate,
         AttendeesMOLEAId: this.state.users,
         AttendeesCustomer: this.state.attendeeDropdown,
         AttendeesOther: this.state.interestedPartiesexternalstr,
@@ -586,7 +586,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
     
     if(!this.state.allfieldsvalid){
       
-      attendeeFieldErrorMessage = !isselectedattendees ?
+      attendeeFieldErrorMessage = (isselectedattendees==false) ?
         <MessageBar messageBarType={MessageBarType.error}>Attendees (MOLEA)
         is required.</MessageBar>
         : null;
@@ -731,7 +731,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
          <ReactQuill theme='snow'
           modules={formconst.modules}    
           formats={formconst.formats}  
-          value={this.state.purposeofmeeting}  onChange={(text)=>this.onmanagementsummarychange(text)}  
+          value={this.state.managementsummary}  onChange={(text)=>this.onmanagementsummarychange(text)}  
       ></ReactQuill> 
        <div id = "managementsummary" className="mt-5 text-center">
         <label htmlFor="managementsummaryattachment" className="btn btn-primary text-light" role="button" aria-disabled="false">
@@ -758,7 +758,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
          <ReactQuill theme='snow'
           modules={formconst.modules}    
           formats={formconst.formats}  
-          value={this.state.purposeofmeeting}  onChange={(text)=>this.onmainminuteschange(text)}  
+          value={this.state.mainminutes}  onChange={(text)=>this.onmainminuteschange(text)}  
       ></ReactQuill> {mmFieldErrorMessage}
        <div id = "mainminutes" className="mt-5 text-center">
         <label htmlFor="mainminutesattachment" className="btn btn-primary text-light" role="button" aria-disabled="false">
@@ -785,7 +785,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
          <ReactQuill theme='snow'
           modules={formconst.modules}    
           formats={formconst.formats}  
-          value={this.state.purposeofmeeting}  onChange={(text)=>this.onactionschange(text)}  
+          value={this.state.actions}  onChange={(text)=>this.onactionschange(text)}  
       ></ReactQuill></div>
       <br />
       <Stack horizontal horizontalAlign='end' className={styles.stackContainer}>     

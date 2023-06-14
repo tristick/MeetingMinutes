@@ -1,13 +1,7 @@
 import { SPFI } from "@pnp/sp";
-
 import { getSP } from "../pnpjsconfig";
 import { IMeetingMinutesFormProps } from "../webparts/meetingMinutesForm/components/IMeetingMinutesFormProps";
 import * as formconst from "../webparts/constant";
-
-
-
-
-
 
 export const getCustomerItem= async (props:IMeetingMinutesFormProps) => {
     const _sp :SPFI = getSP(props.context) ;
@@ -68,92 +62,6 @@ export const updateData=(props:IMeetingMinutesFormProps ,itemId: number, data: a
 }
 
   
-  /* export const getLatestItemId= async (props:ITrpreqfrmProps):Promise<ITrc[]>=> {
-    const _sp :SPFI = getSP(props.context) ;
-    const items = await _sp.web.lists.getByTitle(formconst.LISTNAME).items.orderBy("ID", false).top(1)();
-    return items;
-    //return items.length > 0 ? items[0].ID : 0;
-  }
-
-  export const getCustomerRef=(props:ITrpreqfrmProps,customerName: string) => {
-    console.log(customerName)
-    const _sp :SPFI = getSP(props.context) ;
-    return new Promise((resolve, reject) => {
-      _sp.web.lists.getByTitle(formconst.CUSTOMER_LISTNAME).items.select("RefCode").filter(`Title eq '${customerName}'`)()
-        .then((items) => {
-          if (items.length > 0) {
-            const customerRef = items[0].RefCode;
-            console.log(customerRef)
-            resolve(customerRef);
-          } else {
-            reject(new Error("Customer not found"));
-          }
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  }
-
-
-
-
-  export const getOfficeRef=(props:ITrpreqfrmProps,officeName: string) => {
-    console.log(officeName)
-    const _sp :SPFI = getSP(props.context) ;
-    return new Promise((resolve, reject) => {
-      _sp.web.lists.getByTitle(formconst.REQUEST_LISTNAME).items.select("RefCode").filter(`Title eq '${officeName}'`)()
-        .then((items) => {
-          if (items.length > 0) {
-            const officeRef = items[0].RefCode;
-            console.log(officeRef)
-            resolve(officeRef);
-          } else {
-            reject(new Error("Office not found"));
-          }
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  }
-
-
-  export async function checklistFolderExistence(props:ITrpreqfrmProps,folderPath: string): Promise<boolean> {
-   
-    folderPath = folderPath.replace(formconst.BASE_URL, "");
-      const _sp :SPFI = getSP(props.context) ;
-      console.log(folderPath);
-      const listfolder = await  _sp.web.getFolderByServerRelativePath(folderPath).select('Exists')();
-      if(listfolder.Exists){
-      return true;
-      }else{return false;} // Folder exists
-    
-  }
-  export async function checklibFolderExistence(props:ITrpreqfrmProps,folderPath: string): Promise<boolean> {
-    folderPath = folderPath.replace(formconst.BASE_URL, "");
-    console.log(folderPath)
-    const _sp :SPFI = getSP(props.context) ;
-    const listfolder = await _sp.web.getFolderByServerRelativePath(folderPath).select('Exists')();
-    if(listfolder.Exists){
-    return true;
-    }else{return false;} // Folder exists
-  
-}
-
-
-export const getItem= async (props:ITrpreqfrmProps,key:string):Promise<ITrc[]>=> {
-
-  console.log(key)
-  const _sp :SPFI = getSP(props.context) ;
-  const items  =_sp.web.lists.getByTitle(formconst.LISTNAME).items.filter(`Title eq '${key}'`)()
-    
-  console.log('items',items);
-  return items;
-    
-    
-}
- */
 
   
 
