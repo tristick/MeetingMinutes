@@ -21,6 +21,22 @@ export const getCustomerItem= async (props:IMeetingMinutesFormProps) => {
     });
 });
 }
+
+export const getContactItem= async (props:IMeetingMinutesFormProps) => {
+  const _sp :SPFI = getSP(props.context) ;
+  return new Promise((resolve,reject) =>{
+    _sp.web.lists.getByTitle(formconst.CONTACTS_LIST_NAME).reserveListItemId()
+    .then((items) => {
+     
+        resolve(items);
+      
+
+  }).catch((error) => {
+    reject(error);
+  });
+});
+}
+
     
 export const submitDataAndGetId = async (props:IMeetingMinutesFormProps,data:any): Promise<any> => {
   

@@ -9,7 +9,7 @@ import 'react-quill/dist/quill.snow.css';
 import { IMeetingMinutesFormState } from './IMeetingMinutesFormState';
 import { IStyleFunctionOrObject, ITextFieldStyleProps, ITextFieldStyles, Label, MessageBar, MessageBarType, PrimaryButton, Stack, TextField } from 'office-ui-fabric-react';
 import { DateConvention, DateTimePicker, ListItemPicker } from '@pnp/spfx-controls-react';
-import { getCustomerItem, submitDataAndGetId, updateData } from '../../../services/formservices';
+import { getContactItem, getCustomerItem, submitDataAndGetId, updateData } from '../../../services/formservices';
 import ReactDOM from 'react-dom';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
 import { SPFI } from '@pnp/sp';
@@ -72,9 +72,22 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
 
   public componentDidMount()
   {
-   
+   console.log(this.props.siteUrl)
     this.fetchCustomer();
+    this.fetchcontactlistguid();
   }
+
+  fetchcontactlistguid = async () => {
+    try {
+    const customerItem:any = await getContactItem(this.props);
+    console.log(customerItem)
+    
+
+ 
+  } catch (error) {
+    console.error('Error fetching Contact items:', error);
+  }
+};
 
   fetchCustomer = async () => {
     
@@ -453,7 +466,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
         for (var i = 0; i < bgfiles.length; i++) {
           let bgfile = bginput.files[i];
           console.log("bgfile",bgfile)
-          bgfileurl.push(formconst.WEB_URL + "/" + folderUrl + "/" +bgfile.name);
+          bgfileurl.push(this.props.siteUrl+ "/" + folderUrl + "/" +bgfile.name);
           //console.log()
           try {
             let bguploadedFile = await _sp.web.getFolderByServerRelativePath(folderUrl).files.addChunked(bgfile.name, bgfile, (data) => {
@@ -488,7 +501,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
         for (var i = 0; i < vfiles.length; i++) {
           let vfile = vinput.files[i];
           console.log("vfile",vfile)
-          vfileurl.push(formconst.WEB_URL + "/" + folderUrl + "/" + vfile.name);
+          vfileurl.push(this.props.siteUrl + "/" + folderUrl + "/" + vfile.name);
           try {
             let vuploadedFile = await _sp.web.getFolderByServerRelativePath(folderUrl).files.addChunked(vfile.name, vfile, (data) => {
               console.log("File uploaded successfully");
@@ -523,7 +536,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
         for (var i = 0; i < ofiles.length; i++) {
           let ofile = oinput.files[i];
           console.log("ofile",ofile)
-          ofileurl.push(formconst.WEB_URL + "/" + folderUrl + "/" + ofile.name);
+          ofileurl.push(this.props.siteUrl+ "/" + folderUrl + "/" + ofile.name);
           try {
             let ouploadedFile = await _sp.web.getFolderByServerRelativePath(folderUrl).files.addChunked(ofile.name, ofile, (data) => {
               console.log("File uploaded successfully");
