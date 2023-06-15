@@ -9,7 +9,7 @@ import 'react-quill/dist/quill.snow.css';
 import { IMeetingMinutesFormState } from './IMeetingMinutesFormState';
 import { IStyleFunctionOrObject, ITextFieldStyleProps, ITextFieldStyles, Label, MessageBar, MessageBarType, PrimaryButton, Stack, TextField } from 'office-ui-fabric-react';
 import { DateConvention, DateTimePicker, ListItemPicker } from '@pnp/spfx-controls-react';
-import { getContactItem, getCustomerItem, submitDataAndGetId, updateData } from '../../../services/formservices';
+import { getCustomerItem, submitDataAndGetId, updateData } from '../../../services/formservices';
 import ReactDOM from 'react-dom';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
 import { SPFI } from '@pnp/sp';
@@ -72,22 +72,11 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
 
   public componentDidMount()
   {
-   console.log(this.props.siteUrl)
+   
     this.fetchCustomer();
-    this.fetchcontactlistguid();
+    console.log(this.props.context.pageContext.site);
   }
 
-  fetchcontactlistguid = async () => {
-    try {
-    const customerItem:any = await getContactItem(this.props);
-    console.log(customerItem)
-    
-
- 
-  } catch (error) {
-    console.error('Error fetching Contact items:', error);
-  }
-};
 
   fetchCustomer = async () => {
     
@@ -638,7 +627,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
     successMessage = this.state.isSuccess ?
     <MessageBar messageBarType={MessageBarType.success}>Meeting Id : {this.state.title} submitted successfully.</MessageBar>
     : null;
-   
+ 
    return (
       <section>
         <div>
@@ -682,13 +671,13 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
     />{attendeeFieldErrorMessage}
 
          <p className={styles.formlabel}>Attendees (Customer)<span className={styles.required}> *</span></p>
-        <ListItemPicker listId={formconst.CONTACTS_LIST_ID}
+        <ListItemPicker listId={formconst.CONTACTS_LIST_NAME}
         context={this.props.context as any}
           columnInternalName='Title'
           keyColumnInternalName='Id'
           placeholder="Select your Customer"
           substringSearch={true}
-          orderBy={"Id desc"}
+          orderBy={"Title"}
           itemLimit={1}
           enableDefaultSuggestions={true}
           onSelectedItem={this._onattendesSelectedItem}

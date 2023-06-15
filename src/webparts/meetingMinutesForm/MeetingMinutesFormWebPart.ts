@@ -32,6 +32,7 @@ export default class MeetingMinutesFormWebPart extends BaseClientSideWebPart<IMe
         userDisplayName: this.context.pageContext.user.displayName,
         context:this.context,
         siteUrl: this.context.pageContext.web.absoluteUrl
+        
       }
     );
 

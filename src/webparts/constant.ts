@@ -1,11 +1,9 @@
 export const LISTNAME ="Meeting Minutes";
 export const METADATA_LISTNAME ="Metadata";
-export const CONTACTS_LIST_ID ="1b5dc2b0-36ca-4507-8839-b09fce7b69a0";
 export const CONTACTS_LIST_NAME ="Contacts";
 export const LIBRARYNAME = "Shared Documents";
-//export const WEB_URL= "https://k6931.sharepoint.com/sites/Rupankana";  
-export const CANCEL_REDIRECT = "https://k6931.sharepoint.com/sites/Rupankana/SitePages/Home.aspx";
-export const SUBMIT_REDIRECT = "https://k6931.sharepoint.com/sites/Rupankana/SitePages/Destination.aspx";
+export const CANCEL_REDIRECT = "https://k6931.sharepoint.com/sites/Commercialhub";
+export const SUBMIT_REDIRECT = "https://k6931.sharepoint.com/sites/Commercialhub";
 
 
 
