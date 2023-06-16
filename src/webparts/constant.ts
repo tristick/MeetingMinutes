@@ -5,7 +5,7 @@ export const METADATA_LISTNAME ="Metadata";
 export const CONTACTS_LIST_NAME ="Contacts";
 export const LIBRARYNAME = "Shared Documents";
 export const SUBMIT_REDIRECT = (props: IMeetingMinutesFormProps): URL => {return new URL(props.context.pageContext.web.absoluteUrl +"/SitePages/Home.aspx");};
-export const CANCEL = (props: IMeetingMinutesFormProps): URL => {return new URL(props.context.pageContext.web.absoluteUrl);};
+export const CANCEL_REDIRECT = (props: IMeetingMinutesFormProps): URL => {return new URL(props.context.pageContext.web.absoluteUrl);};
 
 
 

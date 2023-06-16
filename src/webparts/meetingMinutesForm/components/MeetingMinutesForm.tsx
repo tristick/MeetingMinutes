@@ -560,7 +560,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
 
 
       private cancel =()=>{
-        window.open(formconst.SUBMIT_REDIRECT(this.props),"_self");
+        window.open(formconst.CANCEL_REDIRECT(this.props),"_self");
       }
 
       private _resetrichtext = () =>{
