@@ -74,7 +74,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
   {
    
     this.fetchCustomer();
-    console.log(this.props.context.pageContext.site);
+    //console.log(this.props.context.pageContext.site);
   }
 
 
@@ -347,7 +347,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
 
           const data = {
             Title: 'New Item creation in process',
-            PurposeofMeeting: this.state.purposeofmeeting,
+            PurposeOfMeeting: this.state.purposeofmeeting,
             ManagementSummary: this.state.managementsummary,
             MainMinutes: this.state.mainminutes,
             Actions: this.state.actions,
@@ -392,6 +392,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
       // Update the item
       const updatedData = {
         Title: this.state.title,
+        MeetingTitle:this.state.meetingtitle,
         Customer: this.state.customer,
         Location: this.state.location,
         MeetingDate: this.state.meetingdate,
@@ -412,8 +413,8 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
       isbuttondisbled = false;
       buttontext = "Submit"
       this.setState({ isSuccess: true });
-   
-    window.open(formconst.SUBMIT_REDIRECT,"_self")
+    
+    window.open(formconst.SUBMIT_REDIRECT(props),"_self")
     }) 
     .catch((error: any) => {
       
@@ -559,7 +560,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
 
 
       private cancel =()=>{
-        window.open(formconst.CANCEL_REDIRECT,"_self");
+        window.open(formconst.SUBMIT_REDIRECT(this.props),"_self");
       }
 
       private _resetrichtext = () =>{
@@ -631,10 +632,11 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
    return (
       <section>
         <div>
-        <p className={styles.heading}>Outline of the Meeting</p>
+       
           <div>
           <p><span className={styles.required}><b>*</b></span> Required.</p>
           </div>
+          <p className={styles.heading}>Overview</p>
         <p className={styles.formlabel}>Customer<span className={styles.required}> *</span></p>
         <Label>{this.state.customer}</Label>
 
@@ -651,7 +653,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
 
         <p className={styles.formlabel}>Location<span className={styles.required}> *</span></p>  
         <TextField value={this.state.location} onChange={this._onlocation}/>{locationFieldErrorMessage}
-        
+        <p className={styles.heading}>Attendees</p>
         <PeoplePicker
             context={this.props.context as any}
             titleText="Attendees (MOLEA)"
@@ -701,7 +703,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
         </div>    
         <br/>
         {EmailFieldErrorMessage}
-
+        <p className={styles.heading}>Meeting Details</p>    
          <p className={styles.formlabel}>Purpose of Meeting<span className={styles.required}> *</span></p>
          <ReactQuill theme='snow'
           modules={formconst.modules}    
