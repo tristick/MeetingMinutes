@@ -675,11 +675,11 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
          <p className={styles.formlabel}>Attendees (Customer)<span className={styles.required}> *</span></p>
         <ListItemPicker listId={formconst.CONTACTS_LIST_NAME}
         context={this.props.context as any}
-          columnInternalName='Title'
+          columnInternalName='FullName'
           keyColumnInternalName='Id'
           placeholder="Select your Customer"
           substringSearch={true}
-          orderBy={"Title"}
+          orderBy={"FullName"}
           itemLimit={1}
           enableDefaultSuggestions={true}
           onSelectedItem={this._onattendesSelectedItem}
