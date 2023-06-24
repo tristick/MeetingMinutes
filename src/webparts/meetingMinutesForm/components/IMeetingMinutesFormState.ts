@@ -18,5 +18,7 @@ export interface IMeetingMinutesFormState {
     pmdocuments:string
     msdocuments:string
     mmdocuments:string
+    weburl:any
+    contactlistid:any
 
 }

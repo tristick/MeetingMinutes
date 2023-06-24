@@ -9,12 +9,14 @@ import 'react-quill/dist/quill.snow.css';
 import { IMeetingMinutesFormState } from './IMeetingMinutesFormState';
 import { IStyleFunctionOrObject, ITextFieldStyleProps, ITextFieldStyles, Label, MessageBar, MessageBarType, PrimaryButton, Stack, TextField } from 'office-ui-fabric-react';
 import { DateConvention, DateTimePicker, ListItemPicker } from '@pnp/spfx-controls-react';
-import { getCustomerItem, submitDataAndGetId, updateData } from '../../../services/formservices';
+import { getCustomerItem, getCustomerRef, getcontactlistId, submitDataAndGetId, updateData, uploadAttachment } from '../../../services/formservices';
 import ReactDOM from 'react-dom';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
-import { SPFI } from '@pnp/sp';
-import { getSP } from '../../../pnpjsconfig';
+//import { SPFI} from '@pnp/sp';
+//import { getSP } from '../../../pnpjsconfig';
 import "@pnp/sp/files";
+
+
 
 const textFieldStyles: Partial<ITextFieldStyles> = {
   field: {
@@ -29,6 +31,9 @@ let buttontext : string = "Submit";
 let isselectedattendees:boolean = false ;
 let listId: number;
 let customerreference:string;
+let isCustomerWorkspace:string;
+let cweburl:any;
+let contactlist :string;
 
 
 export default class MeetingMinutesForm extends React.Component<IMeetingMinutesFormProps, IMeetingMinutesFormState> {
@@ -55,6 +60,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
       meetingdate:new Date(),
       users:[],
       attendeeDropdown:"",
+
       attendeesother:"",
       interestedPartiesexternal: [],
       interestedPartiesexternalstr:"",
@@ -64,7 +70,9 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
       location:"",
       pmdocuments:"",
       msdocuments:"",
-      mmdocuments:""
+      mmdocuments:"",
+      weburl:"",
+      contactlistid:""
 
     }
   
@@ -74,19 +82,27 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
   {
    
     this.fetchCustomer();
-    //console.log(this.props.context.pageContext.site);
+    
+    
   }
 
 
   fetchCustomer = async () => {
     
       const customerItem:any = await getCustomerItem(this.props);
-      console.log(customerItem)
+      console.log("customer",customerItem)
+      if(customerItem =="null")
+      {
+        console.log("no block")
+          isCustomerWorkspace = "No"
+      }else{
+        console.log("yes block")
       try {
+        isCustomerWorkspace = "Yes"
         const customer = customerItem[0].Title
-        console.log(customer)
+       
         const customerRef = customerItem[0].RefCode;
-        console.log(customerRef)
+
       this.setState({customer:customer});
       customerreference = customerRef
 
@@ -94,7 +110,41 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
     } catch (error) {
       console.error('Error fetching customer items:', error);
     }
+  }
   };
+
+  private _oncustomerSelectedItem = async (data: { key: string; name: string }[])=> {
+ 
+    if (data.length === 0) {
+      this.setState({ customer: "" });
+    } else {
+      getCustomerRef(this.props, data[0].name)
+        .then((customerRef: string) => {
+        
+          cweburl="https://k6931.sharepoint.com/sites/" + customerRef;
+         
+          this.setState({ customer: data[0].name });
+          customerreference = customerRef;
+       
+          
+        }).then(() => {
+        getcontactlistId(this.props, cweburl)
+        .then((listid: string) =>{
+             contactlist = listid 
+              setTimeout(() =>{this.setState({weburl:cweburl},this.render);},3000)
+              
+        }).then(()=>{
+
+         
+          this.setState({contactlistid:contactlist},this.render)
+        })
+         
+        })
+        .catch((error) => {
+          console.log("Error:", error);
+        });
+    }
+  }
 
   private onpurposeofmeetingchange = (newText: string) => {
     
@@ -146,11 +196,20 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
   }
   
   private _onattendesSelectedItem=(data: { key: string; name: string }[])=> {
+
+    console.log(data)
     
     if(data.length == 0 ){
       this.setState({attendeeDropdown:""})
     }else{
-    this.setState({attendeeDropdown:data[0].name as string})
+      let selectedUsers: string[] = [];
+       data.map((item) => {
+         selectedUsers.push(item.name);
+        
+       }); 
+    this.setState({attendeeDropdown:(JSON.stringify(selectedUsers)).slice(1, -1).replace(/"/g, '')})
+    
+    console.log('attendeeusers:',selectedUsers)  
    
     }
   }
@@ -355,7 +414,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
           
          }; 
 
-         submitDataAndGetId(this.props,data).then(async (itemId: any) => {
+         submitDataAndGetId(this.props,data,cweburl).then(async (itemId: any) => {
           listId = itemId   
           console.log(`Item created with ID: ${itemId}`);
   
@@ -404,7 +463,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
         MainMinutesDocuments:this.state.mmdocuments,
         
       };
-      return updateData(this.props,listId, updatedData);
+      return updateData(this.props,listId, updatedData,cweburl);
     })
      .then(() => {
       //console.log('Item Updated successfully');
@@ -437,11 +496,11 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
   const upload = async () => {
   
       console.log(folderUrl)
-      const _sp :SPFI = getSP(props.context) ;
+      //const _sp :SPFI = getSP(props.context) ;
       let strbgurl = "";
       let vstrbgurl = "";
       let ostrbgurl = "";
-      _sp.web.folders.addUsingPath(folderUrl);
+      //_sp.web.folders.addUsingPath(folderUrl);
       // bgfiles
       
       let bgfileurl = [];
@@ -459,14 +518,8 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
           bgfileurl.push(this.props.siteUrl+ "/" + folderUrl + "/" +bgfile.name);
           //console.log()
           try {
-            let bguploadedFile = await _sp.web.getFolderByServerRelativePath(folderUrl).files.addChunked(bgfile.name, bgfile, (data) => {
-              console.log("File uploaded successfully");
-            });
-            let item = await bguploadedFile.file.getItem();
+            await uploadAttachment(this.props,folderUrl,bgfile.name, bgfile,this.state.title,cweburl)
            
-            await item.update({MeetingId:this.state.title})
-  
-              
           } catch (err) {
             console.error("Error uploading file:", err);
           }
@@ -493,12 +546,8 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
           console.log("vfile",vfile)
           vfileurl.push(this.props.siteUrl + "/" + folderUrl + "/" + vfile.name);
           try {
-            let vuploadedFile = await _sp.web.getFolderByServerRelativePath(folderUrl).files.addChunked(vfile.name, vfile, (data) => {
-              console.log("File uploaded successfully");
-            });
-            let item = await vuploadedFile.file.getItem();
-           
-            await item.update({MeetingId:this.state.title})
+             await uploadAttachment(this.props,folderUrl,vfile.name, vfile,this.state.title,cweburl)
+            
           } catch (err) {
             console.error("Error uploading file:", err);
           }
@@ -528,13 +577,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
           console.log("ofile",ofile)
           ofileurl.push(this.props.siteUrl+ "/" + folderUrl + "/" + ofile.name);
           try {
-            let ouploadedFile = await _sp.web.getFolderByServerRelativePath(folderUrl).files.addChunked(ofile.name, ofile, (data) => {
-              console.log("File uploaded successfully");
-            });
-            let item = await ouploadedFile.file.getItem();
-           
-            await item.update({MeetingId:this.state.title}) ;
-               
+             await uploadAttachment(this.props,folderUrl,ofile.name, ofile,this.state.title,cweburl)
             
           } catch (err) {
             console.error("Error uploading file:", err);
@@ -549,15 +592,10 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
         console.log("No file selected for upload.");
         
       }
-  
-      
-     
-    }
-      
-      
 
     }
 
+    }
 
       private cancel =()=>{
         window.open(formconst.CANCEL_REDIRECT(this.props),"_self");
@@ -637,8 +675,36 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
           <p><span className={styles.required}><b>*</b></span> Required.</p>
           </div>
           <p className={styles.heading}>Overview</p>
-        <p className={styles.formlabel}>Customer<span className={styles.required}> *</span></p>
-        <Label>{this.state.customer}</Label>
+
+         
+          <p className={styles.formlabel}>Customer<span className={styles.required}> *</span></p>
+          
+          {
+              isCustomerWorkspace === "Yes" ? (
+                <div>
+
+                  
+                  <Label>{this.state.customer}</Label>
+                </div>
+              ) : (
+               
+                <ListItemPicker
+                  listId={formconst.CUSTOMER_LIST_ID}
+                  context={this.props.context as any}
+                  webUrl={formconst.CUSTOMER_URL}
+                  columnInternalName="Title"
+                  keyColumnInternalName="Id"
+                  placeholder="Select your Customer"
+                  substringSearch={true}
+                  orderBy={"Title"}
+                  itemLimit={1}
+                  enableDefaultSuggestions={true}
+                  onSelectedItem={this._oncustomerSelectedItem}
+                  noResultsFoundText="No Customer Found"
+                  defaultSelectedItems={[]}
+                />
+              )
+            }
 
         <p className={styles.formlabel}>Meeting Title<span className={styles.required}> *</span></p>  
         <TextField value={this.state.meetingtitle} onChange={this._onmeetingtitle} />{meetingtitleFieldErrorMessage}
@@ -671,20 +737,47 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
             principalTypes={[PrincipalType.User]}
             resolveDelay={1000}
     />{attendeeFieldErrorMessage}
-
+      
          <p className={styles.formlabel}>Attendees (Customer)<span className={styles.required}> *</span></p>
-        <ListItemPicker listId={formconst.CONTACTS_LIST_NAME}
-        context={this.props.context as any}
-          columnInternalName='FullName'
-          keyColumnInternalName='Id'
-          placeholder="Select your Customer"
-          substringSearch={true}
-          orderBy={"FullName"}
-          itemLimit={1}
-          enableDefaultSuggestions={true}
-          onSelectedItem={this._onattendesSelectedItem}
-          noResultsFoundText="No Attendees Found"
-          defaultSelectedItems = {[]}/>{attcustFieldErrorMessage}
+         {console.log("nn",contactlist)}
+        {isCustomerWorkspace === "No"  ? (
+          
+            <ListItemPicker
+              listId={contactlist}
+              context={this.props.context as any}
+              webUrl={cweburl}
+              columnInternalName='calFullName'
+              //keyColumnInternalName='ID'
+              placeholder="Search your Customer"
+              substringSearch={true}
+              orderBy={"calFullName"}
+              itemLimit={10}
+              disabled={false}
+              enableDefaultSuggestions={false}
+              onSelectedItem={this._onattendesSelectedItem}
+              noResultsFoundText="No Attendees Found"
+              defaultSelectedItems={[]}
+              key={contactlist}
+            />
+          ) : (
+            <ListItemPicker
+              listId={formconst.CONTACTS_LIST_NAME}
+              context={this.props.context as any}
+         
+              columnInternalName='calFullName'
+              //keyColumnInternalName='ID'
+              placeholder="Search your Customer"
+              substringSearch={true}
+              orderBy={"calFullName"}
+              itemLimit={10}
+              disabled={false}
+              enableDefaultSuggestions={true}
+              onSelectedItem={this._onattendesSelectedItem}
+              noResultsFoundText="No Attendees Found"
+              defaultSelectedItems={[]}
+            />
+          )} 
+          {attcustFieldErrorMessage}
 
           <Stack horizontal verticalAlign="end" className={styles.attendeesotherstackContainer }>
           <TextField
@@ -705,7 +798,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
         {EmailFieldErrorMessage}
         <p className={styles.heading}>Meeting Details</p>    
          <p className={styles.formlabel}>Purpose of Meeting<span className={styles.required}> *</span></p>
-         <ReactQuill theme='snow'
+         <ReactQuill
           modules={formconst.modules}    
           formats={formconst.formats}  
           value={this.state.purposeofmeeting}  onChange={(text)=>this.onpurposeofmeetingchange(text)}  
