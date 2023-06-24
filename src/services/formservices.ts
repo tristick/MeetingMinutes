@@ -65,9 +65,9 @@ export const getcontactlistId = (props:IMeetingMinutesFormProps,weburl:string) =
 export const submitDataAndGetId = async (props:IMeetingMinutesFormProps,data:any,weburl?:any): Promise<any> => {
   
   const _sp :SPFI = getSP(props.context) ;
-  console.log(weburl)
+
   let appurl = weburl !== undefined ? Web(weburl).using(SPFx(props.context)):_sp.web
-console.log(appurl)
+
   return appurl.lists.getByTitle(formconst.LISTNAME).items.add(data)
     .then((response) => {
       console.log(response)
@@ -75,11 +75,11 @@ console.log(appurl)
         const itemId = response.data.Id;
 
         console.log("ID",itemId)
-        // Resolve the promise with the item ID
+        
         return Promise.resolve(itemId);
     })
     .catch((error) => {
-        // Handle any errors that occurred during the request
+       
         return Promise.reject(error);
     });
 
@@ -95,7 +95,6 @@ export const updateData=(props:IMeetingMinutesFormProps ,itemId: number, data: a
     appurl.lists.getByTitle(formconst.LISTNAME).items.getById(itemId).update(data)
       .then(() => {
         
-        //console.log(e.response.headers.get("content-length"))
         resolve();
       })
       .catch((error) => {

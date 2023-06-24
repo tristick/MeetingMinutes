@@ -12,17 +12,10 @@ import { DateConvention, DateTimePicker, ListItemPicker } from '@pnp/spfx-contro
 import { getCustomerItem, getCustomerRef, getcontactlistId, submitDataAndGetId, updateData, uploadAttachment } from '../../../services/formservices';
 import ReactDOM from 'react-dom';
 import { isEmpty } from '@microsoft/sp-lodash-subset';
-//import { SPFI} from '@pnp/sp';
-//import { getSP } from '../../../pnpjsconfig';
 import "@pnp/sp/files";
 
 
 
-const textFieldStyles: Partial<ITextFieldStyles> = {
-  field: {
-    width: '600px', // Adjust the desired width
-  },
-};
 
 let isemailInvalid:boolean = false;
 let streamerror:boolean =false;
@@ -60,7 +53,6 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
       meetingdate:new Date(),
       users:[],
       attendeeDropdown:"",
-
       attendeesother:"",
       interestedPartiesexternal: [],
       interestedPartiesexternalstr:"",
@@ -82,8 +74,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
   {
    
     this.fetchCustomer();
-    
-    
+   
   }
 
 
@@ -191,14 +182,11 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
 
     }
      
-       
-       
   }
   
   private _onattendesSelectedItem=(data: { key: string; name: string }[])=> {
 
-    console.log(data)
-    
+   
     if(data.length == 0 ){
       this.setState({attendeeDropdown:""})
     }else{
@@ -215,12 +203,10 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
   }
 
   private _onmeetingtitle=(ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newText: string): void =>{ 
-    //isemptybaf=isEmpty(newText)
     this.setState({meetingtitle:newText})
   
   }
   private _onlocation=(ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newText: string): void =>{ 
-    //isemptybaf=isEmpty(newText)
     this.setState({location:newText})
   
   }
@@ -416,9 +402,6 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
 
          submitDataAndGetId(this.props,data,cweburl).then(async (itemId: any) => {
           listId = itemId   
-          console.log(`Item created with ID: ${itemId}`);
-  
-          //Request ID format
           let now = new Date();
           let options: Intl.DateTimeFormatOptions = {
           day: '2-digit',
@@ -436,7 +419,6 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
           listIdstr = String(listId)
         }
         
-        console.log(listIdstr)
         let formattedDate = now.toLocaleDateString('en-GB', options).replace(/\//g, '');;
         let lastitemid = (listIdstr)+"-"+"MM"+"-"+customerreference +"-" +formattedDate.toString();
   
@@ -466,8 +448,6 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
       return updateData(this.props,listId, updatedData,cweburl);
     })
      .then(() => {
-      //console.log('Item Updated successfully');
-      // Perform any further actions if needed
       
       isbuttondisbled = false;
       buttontext = "Submit"
@@ -496,13 +476,11 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
   const upload = async () => {
   
       console.log(folderUrl)
-      //const _sp :SPFI = getSP(props.context) ;
+      
       let strbgurl = "";
       let vstrbgurl = "";
       let ostrbgurl = "";
-      //_sp.web.folders.addUsingPath(folderUrl);
-      // bgfiles
-      
+     
       let bgfileurl = [];
 
       let bginput = document.getElementById("purposeofmeetingattachment") as HTMLInputElement;
@@ -526,7 +504,6 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
         }
         let convertedStr = bgfileurl.map(url => `<a href="${url.trim()}" target="_blank">${url.trim()}</a>`);
          strbgurl = convertedStr.toString();
-          //console.log(strbgurl);
           this.setState({ pmdocuments: strbgurl });
       }
         
@@ -562,8 +539,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
         
       }
       
-    
-      // ofiles
+   
       let ofileurl = [];
       let oinput = document.getElementById("mainminutesattachment") as HTMLInputElement;
   
@@ -726,7 +702,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
             placeholder='Select your Attendees'
             defaultSelectedUsers = {[]}
             personSelectionLimit={10}
-            groupName={""} // Leave this blank in case you want to filter from all users
+            groupName={""} 
             ensureUser={true}
             showtooltip={false}
             suggestionsLimit={5}
@@ -763,7 +739,6 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
             <ListItemPicker
               listId={formconst.CONTACTS_LIST_NAME}
               context={this.props.context as any}
-         
               columnInternalName='calFullName'
               //keyColumnInternalName='ID'
               placeholder="Search your Customer"
@@ -783,7 +758,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
           <TextField
             label="Attendees (Other)"
             value={this.state.attendeesother}
-            styles={textFieldStyles as IStyleFunctionOrObject<ITextFieldStyleProps, ITextFieldStyles>}
+            styles={formconst.textFieldStyles as IStyleFunctionOrObject<ITextFieldStyleProps, ITextFieldStyles>}
             onChange={this.onchangeattendeesother}
           
           />

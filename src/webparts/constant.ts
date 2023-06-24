@@ -1,4 +1,6 @@
+import { ITextFieldStyles } from "office-ui-fabric-react";
 import { IMeetingMinutesFormProps } from "./meetingMinutesForm/components/IMeetingMinutesFormProps";
+
 export const CUSTOMER_LIST_ID ="acea17d5-8c92-4eec-80c4-289c6faa4cea";
 export const CUSTOMER_URL = "https://k6931.sharepoint.com/sites/CommercialHub"
 export const CUSTOMER_LISTNAME ="Customers";
@@ -32,3 +34,10 @@ export const modules = {
     ],  
 };
 export const formats = ['header', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'image', 'background', 'color']; 
+
+export const textFieldStyles: Partial<ITextFieldStyles> = {
+    field: {
+      width: '600px', // Adjust the desired width
+    },
+  };
+  
