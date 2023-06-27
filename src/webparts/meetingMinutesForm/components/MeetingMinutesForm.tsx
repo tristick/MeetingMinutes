@@ -374,7 +374,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
 
       private _createItem  =async (props:IMeetingMinutesFormProps):Promise<void>=>{
 
-      if(isselectedattendees==false || (this.state.attendeeDropdown).length == 0 || isEmpty(this.state.meetingtitle)||isEmpty(this.state.location) || isEmpty(this.state.purposeofmeeting) || 
+      if(isselectedattendees==false || (this.state.customer).length == 0 || isEmpty(this.state.meetingtitle)||isEmpty(this.state.location) || isEmpty(this.state.purposeofmeeting) || 
       isEmpty(this.state.mainminutes) 
       )
           {
@@ -622,8 +622,8 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
         is required.</MessageBar>
         : null; 
       
-      attcustFieldErrorMessage = (this.state.attendeeDropdown).length == 0  ?
-        <MessageBar messageBarType={MessageBarType.error}>Attendees (Customer)
+      attcustFieldErrorMessage = (this.state.customer).length == 0  ?
+        <MessageBar messageBarType={MessageBarType.error}>Customer
         is required.</MessageBar>
         : null;
 
@@ -647,9 +647,9 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
       <section>
         <div>
        
-          <div>
+          {/* <div>
           <p><span className={styles.required}><b>*</b></span> Required.</p>
-          </div>
+          </div> */}
           <p className={styles.heading}>Overview</p>
 
          
@@ -680,7 +680,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
                   defaultSelectedItems={[]}
                 />
               )
-            }
+            }{attcustFieldErrorMessage}
 
         <p className={styles.formlabel}>Meeting Title<span className={styles.required}> *</span></p>  
         <TextField value={this.state.meetingtitle} onChange={this._onmeetingtitle} />{meetingtitleFieldErrorMessage}
@@ -699,7 +699,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
         <PeoplePicker
             context={this.props.context as any}
             titleText="Attendees (MOLEA)"
-            placeholder='Select your Attendees'
+            placeholder='Select Attendees'
             defaultSelectedUsers = {[]}
             personSelectionLimit={10}
             groupName={""} 
@@ -714,7 +714,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
             resolveDelay={1000}
     />{attendeeFieldErrorMessage}
       
-         <p className={styles.formlabel}>Attendees (Customer)<span className={styles.required}> *</span></p>
+         <p className={styles.formlabel}>Attendees (Customer)</p>
          {console.log("nn",contactlist)}
         {isCustomerWorkspace === "No"  ? (
           
@@ -724,7 +724,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
               webUrl={cweburl}
               columnInternalName='calFullName'
               //keyColumnInternalName='ID'
-              placeholder="Search your Customer"
+              placeholder="Select Contacts"
               substringSearch={true}
               orderBy={"calFullName"}
               itemLimit={10}
@@ -741,7 +741,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
               context={this.props.context as any}
               columnInternalName='calFullName'
               //keyColumnInternalName='ID'
-              placeholder="Search your Customer"
+              placeholder="Select Contacts"
               substringSearch={true}
               orderBy={"calFullName"}
               itemLimit={10}
@@ -752,7 +752,7 @@ export default class MeetingMinutesForm extends React.Component<IMeetingMinutesF
               defaultSelectedItems={[]}
             />
           )} 
-          {attcustFieldErrorMessage}
+          
 
           <Stack horizontal verticalAlign="end" className={styles.attendeesotherstackContainer }>
           <TextField
